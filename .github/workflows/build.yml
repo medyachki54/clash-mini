@@ -1,4 +1,4 @@
-name: Build APK (fixed)
+name: Build APK (stable)
 
 on:
   push:
@@ -9,39 +9,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install system deps
       run: |
         sudo apt update
-        sudo apt install -y \
-          git zip unzip openjdk-17-jdk \
-          autoconf libtool pkg-config \
-          zlib1g-dev libncurses5-dev libncursesw5-dev \
-          libtinfo6 cmake libffi-dev libssl-dev \
-          build-essential
+        sudo apt install -y git zip unzip openjdk-17-jdk \
+        build-essential autoconf libtool pkg-config \
+        zlib1g-dev libncurses5-dev libncursesw5-dev \
+        libtinfo6 cmake libffi-dev libssl-dev
 
-        pip install --upgrade pip
-        pip install cython buildozer
-
-    - name: Setup Android SDK
+    - name: Install Buildozer
       run: |
-        mkdir -p $HOME/android-sdk
-        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        pip install --upgrade pip
+        pip install cython==0.29.36 buildozer
+
+    - name: Initialize Buildozer
+      run: |
+        buildozer init || true
 
     - name: Build APK
       run: |
-        buildozer init || true
-        buildozer -v android debug
+        buildozer android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: clash-mini-apk
+        name: clashmini-apk
         path: bin/*.apk
