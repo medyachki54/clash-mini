@@ -24,6 +24,6 @@ android.sdk = 24
 android.ndk = 25b
 
 android.permissions = INTERNET
-
+android.accept_sdk_license = True
 [python]
 python_version = 3
